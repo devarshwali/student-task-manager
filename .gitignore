@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+# secrets: never commit real values
+.env
+
+# local database files
+*.sqlite
+*.sqlite-journal
+
+# misc
+coverage/
+.DS_Store
+*.log
