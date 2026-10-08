@@ -60,4 +60,58 @@ function validateCreateTask(body) {
   return { errors, value };
 }
 
-module.exports = { validateCreateTask, isRealDate, PRIORITIES };
+// Validates the body for PATCH /api/tasks/:id (partial update).
+// Only title, description, dueDate and priority can be changed here. Status has its own
+// endpoint (/complete), and id/userId can never be changed.
+function validateUpdateTask(body) {
+  const errors = [];
+  const input = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+  const value = {};
+
+  if (input.title !== undefined) {
+    const title = typeof input.title === 'string' ? input.title.trim() : '';
+    if (title.length < 1 || title.length > 100) {
+      errors.push({ field: 'title', message: 'Title must be 1 to 100 characters' });
+    } else {
+      value.title = title;
+    }
+  }
+
+  if (input.description !== undefined) {
+    if (input.description === null) {
+      value.description = null; // null clears the description
+    } else if (typeof input.description !== 'string' || input.description.trim().length > 500) {
+      errors.push({ field: 'description', message: 'Description must be text up to 500 characters' });
+    } else {
+      value.description = input.description.trim();
+    }
+  }
+
+  if (input.dueDate !== undefined) {
+    if (input.dueDate === null) {
+      value.dueDate = null; // null clears the due date
+    } else if (typeof input.dueDate !== 'string' || !isRealDate(input.dueDate)) {
+      errors.push({ field: 'dueDate', message: 'Due date must be a real date in YYYY-MM-DD format' });
+    } else if (input.dueDate < todayUtc()) {
+      errors.push({ field: 'dueDate', message: 'Due date can not be in the past' });
+    } else {
+      value.dueDate = input.dueDate;
+    }
+  }
+
+  if (input.priority !== undefined) {
+    if (!PRIORITIES.includes(input.priority)) {
+      errors.push({ field: 'priority', message: 'Priority must be low, medium or high' });
+    } else {
+      value.priority = input.priority;
+    }
+  }
+
+  if (errors.length === 0 && Object.keys(value).length === 0) {
+    errors.push({ field: 'body', message: 'Send at least one of: title, description, dueDate, priority' });
+  }
+
+  return { errors, value };
+}
+
+module.exports = { validateCreateTask, validateUpdateTask, isRealDate, PRIORITIES };
