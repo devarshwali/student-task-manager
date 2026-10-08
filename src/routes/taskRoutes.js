@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTask } = require('../controllers/taskController');
+const { createTask, listTasks } = require('../controllers/taskController');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -8,5 +8,6 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.post('/', createTask);
+router.get('/', listTasks);
 
 module.exports = router;
