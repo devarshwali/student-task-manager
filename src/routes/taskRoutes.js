@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   createTask,
+  listTasks,
   updateTask,
   completeTask,
   deleteTask,
@@ -13,6 +14,7 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.post('/', createTask);
+router.get('/', listTasks);
 router.patch('/:id/complete', completeTask);
 router.patch('/:id', updateTask);
 router.delete('/:id', deleteTask);
