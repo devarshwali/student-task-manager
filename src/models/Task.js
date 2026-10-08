@@ -25,7 +25,7 @@ const Task = sequelize.define('Task', {
     allowNull: false,
     defaultValue: 'pending',
   },
-  // The owner of the task. Optional for now, becomes required once login is merged.
+  // The owner of the task. The controller always sets it from the logged-in user.
   userId: {
     type: DataTypes.INTEGER,
     allowNull: true,

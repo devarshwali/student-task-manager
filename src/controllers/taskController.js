@@ -9,7 +9,8 @@ exports.createTask = async (req, res) => {
   }
 
   try {
-    const task = await Task.create(value);
+    // The owner always comes from the verified token, never from the request body.
+    const task = await Task.create({ ...value, userId: req.user.id });
     return res.status(201).json({ message: 'Task created', data: task });
   } catch (err) {
     console.error('createTask failed:', err.message);
